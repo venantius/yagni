@@ -1,5 +1,6 @@
 (ns yagni.core
-  (:require [yagni.namespace.dir :refer [nss-in-dirs]]))
+  (:require [yagni.namespace.dir :refer [nss-in-dirs]]
+            [yagni.namespace :refer [named-functions-map]]))
 
 
 (defn run-yagni
@@ -17,5 +18,6 @@
   (let [{:keys [namespaces]} (nss-in-dirs source-paths)]
     (doseq [n namespaces]
       (create-ns n))
+    (named-functions-map namespaces)
     (println namespaces)
     (shutdown-agents)))
