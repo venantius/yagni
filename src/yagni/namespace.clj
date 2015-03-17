@@ -13,14 +13,14 @@
 
 (defn var-name
   "Return the fully qualified name of the corresponding var."
-  [n v]
-  (symbol (str n)
+  [v]
+  (symbol (str (:ns (meta v)))
           (str (:name (meta v)))))
 
 (defn qualified-interns
   "Return a seq of fully qualified namespace symbols"
   [n]
-  (map #(var-name n (second %)) (ns-interns n)))
+  (map #(var-name (second %)) (ns-interns n)))
 
 (defn named-functions
   "Return the named functions in this namespace"
@@ -30,6 +30,6 @@
 (defn named-functions-map
   "Build a map of all named functions, with the values set to 0."
   [namespaces]
-  (into {} (map vector 
-                (flatten (map named-functions namespaces)) 
+  (into {} (map vector
+                (flatten (map named-functions namespaces))
                 (repeatedly (constantly 0)))))
