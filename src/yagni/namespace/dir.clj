@@ -10,4 +10,4 @@
         tracker (if (seq dirs)
                   (apply dir/scan-all (track/tracker) dirs)
                   (track/tracker))]
-    {:namespaces (:clojure.tools.namespace.track/load tracker)}))
+    (:clojure.tools.namespace.track/load tracker)))
