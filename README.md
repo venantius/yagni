@@ -10,9 +10,6 @@ for a function, it emits a warning.
 
 ## Installation
 
-Put `[yagni "0.1.0-SNAPSHOT"]` into the `:plugins` vector of your
-`:user` profile.
-
 Merge the following into your `~/.lein/profiles.clj`:
 
 ```clojure
@@ -24,6 +21,18 @@ Merge the following into your `~/.lein/profiles.clj`:
 To run Yagni, just:
 
     $ lein yagni
+
+## Contributing
+
+In general, bug reports, fixes, and code cleanup are always appreciated. Feature requests are liable to be subject to a bit more discussion. 
+
+When filing issues, please include the following:
+
+ * The operating system
+ * The JDK version
+ * The Leiningen version
+ * The Clojure version
+ * Any plugins and dependencies in your `project.clj` and your `~/.lein/profiles.clj`
 
 ## License
 
