@@ -1,17 +1,23 @@
 (ns yagni.namespace-test
-  (:require [clojure.test :refer :all]))
+  (:require [clojure.test :refer :all]
+            [yagni.namespace :as namesp]
+            [yagni.sample-ns :as sample-ns]))
 
-(deftest prepare-namespaces-works
-  (is (= 0 1)))
+(def x "sample var")
 
 (deftest var-name-works
-  (is (= 0 1)))
+  (is (= (namesp/var-name (var x))
+         'yagni.namespace-test/x)))
 
 (deftest qualified-interns-works
-  (is (= 0 1)))
+  (is (= (namesp/qualified-interns 'yagni.sample-ns)
+         '(yagni.sample-ns/y
+            yagni.sample-ns/x))))
 
 (deftest named-functions-works
-  (is (= 0 1)))
+  (is (= (namesp/named-functions 'yagni.sample-ns)
+         '(yagni.sample-ns/y))))
 
 (deftest named-functions-map-works
-  (is (= 0 1)))
+  (is (= (namesp/named-functions-map ['yagni.sample-ns]) 
+         {'yagni.sample-ns/y 0})))
