@@ -36,7 +36,7 @@ When filing issues, please include the following:
 
 ## Special Thanks
 
-The following have sponsored work on Yagni:
+The following have sponsored work on Yagni:  
 ![](https://cloud.githubusercontent.com/assets/1824859/6809419/63b4a31a-d217-11e4-9427-11d910410b10.png)
 
 ## License
