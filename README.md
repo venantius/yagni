@@ -3,24 +3,26 @@
 No matter how it happens, sooner or later an application is going to end up
 with dead code. It's time to call Yagni, the exterminator.
 
-Yagni works by identifying all interned functions in the namespaces findable
+Yagni works by identifying all interned vars in the namespaces findable
 within your `:source-paths`, and then walking all interned forms in those
-namespaces to find references to those functions. If it can't find a reference
-for a function, it emits a warning.
+namespaces to find references to those vars. 
+
+It emits warnings for any vars for which it can't find any references outside
+the var's own declaration.
 
 ## Installation
 
 Merge the following into your `~/.lein/profiles.clj`:
 
 ```clojure
-{:user {:plugins [[venantius/yagni "0.1.0-SNAPSHOT"]]}}
+{:user {:plugins [[venantius/yagni "0.1.0"]]}}
 ```
 
 ## Usage
 
-To run Yagni, just:
+To have Yagni search for unused code, just run:
 
-    $ lein yagni
+    $ lein yagni check
 
 ## Contributing
 
