@@ -8,7 +8,8 @@
 (defn get-form
   "Retrieve the form for the underlying symbol"
   [s]
-  (read-string (source-fn s)))
+  (when (source-fn s)
+    (read-string (source-fn s))))
 
 (defn try-to-resolve
   "Tries to resolve the symbol in question. Catch any thrown exceptions and
