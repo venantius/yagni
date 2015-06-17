@@ -9,4 +9,5 @@
 (defn report
   "Report on the output"
   [counter]
+  (println counter)
   (doall (map report-item counter)))

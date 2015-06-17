@@ -9,7 +9,9 @@
   "Retrieve the form for the underlying symbol"
   [s]
   (when (source-fn s)
-    (read-string (source-fn s))))
+    {:source
+     (read-string (source-fn s))
+     :sym s}))
 
 (defn try-to-resolve
   "Tries to resolve the symbol in question. Catch any thrown exceptions and
@@ -27,16 +29,25 @@
   (if (symbol? form)
     (if-let [form-var (try-to-resolve form)]
       (when (get @fn-counter (var-name form-var))
-        (swap! fn-counter update-in [(var-name form-var)] inc)))))
+        (swap! fn-counter update-in [(var-name form-var)] conj)))))
 
 (defn walk-form-body
   "Walk the form."
-  [form]
+  [{:keys [form sym]}]
   (if (or (seq? form) (coll? form))
     (when (seq form)
-      (walk-form-body (first form))
-      (walk-form-body (rest form)))
+      (walk-form-body {:form (first form)
+                       :sym sym})
+      (walk-form-body {:form (rest form)
+                       :sym sym}))
     (maybe-inc form)))
+
+(defn macroexpand-source
+  "While keeping track of the symbol whose form we're exploring, macroexpand
+   the form's source."
+  [{:keys [source sym]}]
+  {:form (macroexpand source)
+   :sym sym})
 
 (defn count-fns-in-ns
   "Count the functions in a single ns."
@@ -44,7 +55,7 @@
   (let [interns (qualified-interns n)
         forms (map get-form interns)]
     (in-ns n)
-    (doall (map #(walk-form-body (macroexpand %)) forms))))
+    (doall (map walk-form-body (map macroexpand-source forms)))))
 
 (defn count-fns
   "Count the functions in all namespaces."

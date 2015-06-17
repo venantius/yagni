@@ -6,7 +6,8 @@
   "I don't do a lot."
   [project & args]
   (let [opts (select-keys project [:source-paths :yagni])
-        deps {:dependencies [['venantius/yagni "0.1.0-SNAPSHOT"]]}]
+        deps {:dependencies [['org.clojure/tools.namespace "0.2.10"]
+                             ['venantius/yagni "0.1.0-SNAPSHOT"]]}]
     (eval-in-project
       (merge-profiles project [deps])
       `(yagni.core/run-yagni '~opts)
