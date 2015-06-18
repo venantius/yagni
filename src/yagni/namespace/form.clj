@@ -3,7 +3,7 @@
             [yagni.namespace :refer [qualified-interns
                                      var-name]]))
 
-(def fn-graph (atom {}))
+(def graph (atom {}))
 
 (defn get-form
   "Retrieve the form for the underlying symbol"
@@ -23,16 +23,17 @@
       nil)))
 
 (defn maybe-inc
-  "Take a look at the form. If it's a symbol that can be resolved to a var,
-   and is already within our function counter, then add it to the counter."
+  "Take a look at the form. If it's a symbol that can be resolved to a var 
+   and exists as a node in our graph, then add an outgoing edge from the
+   sym to this var."
   [sym form]
   (when (symbol? form)
     (when-let [form-var (try-to-resolve form)]
       (let [v (var-name form-var)]
         (when (and
-                (get @fn-graph v)
+                (get @graph v)
                 (not= v sym))
-          (swap! fn-graph update-in [v] conj sym))))))
+          (swap! graph update-in [sym] conj v))))))
 
 (defn walk-form-body
   "Walk the form."
@@ -52,7 +53,7 @@
   {:form (macroexpand source)
    :sym sym})
 
-(defn count-fns-in-ns
+(defn count-vars-in-ns
   "Count the functions in a single ns."
   [n]
   (let [interns (qualified-interns n)
@@ -60,7 +61,7 @@
     (in-ns n)
     (doall (map walk-form-body (map macroexpand-source forms)))))
 
-(defn count-fns
+(defn count-vars
   "Count the functions in all namespaces."
   [namespaces]
-  (doall (map count-fns-in-ns namespaces)))
+  (doall (map count-vars-in-ns namespaces)))

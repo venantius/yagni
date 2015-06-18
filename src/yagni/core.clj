@@ -1,7 +1,7 @@
 (ns yagni.core
   (:require [yagni.namespace.dir :refer [nss-in-dirs]]
-            [yagni.namespace.form :refer [fn-graph count-fns]]
-            [yagni.namespace :refer [named-functions-map prepare-namespaces]]
+            [yagni.namespace.form :refer [graph count-vars]]
+            [yagni.namespace :refer [named-vars-map prepare-namespaces]]
             [yagni.reporter :refer [report]]))
 
 (defn run-yagni
@@ -18,9 +18,10 @@
 
    TODO: Build in an escape hatch for :main methods."
   [{:keys [source-paths] :as opts}]
+  (println opts)
   (let [namespaces (nss-in-dirs source-paths)]
     (prepare-namespaces namespaces)
-    (swap! fn-graph merge (named-functions-map namespaces))
-    (count-fns namespaces)
-    (report @fn-graph)
+    (swap! graph merge (named-vars-map namespaces))
+    (count-vars namespaces)
+    (report @graph)
     (shutdown-agents)))
