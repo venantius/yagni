@@ -1,6 +1,6 @@
 (ns yagni.core
   (:require [yagni.namespace.dir :refer [nss-in-dirs]]
-            [yagni.namespace.form :refer [fn-counter count-fns]]
+            [yagni.namespace.form :refer [fn-graph count-fns]]
             [yagni.namespace :refer [named-functions-map prepare-namespaces]]
             [yagni.reporter :refer [report]]))
 
@@ -20,7 +20,7 @@
   [{:keys [source-paths] :as opts}]
   (let [namespaces (nss-in-dirs source-paths)]
     (prepare-namespaces namespaces)
-    (swap! fn-counter merge (named-functions-map namespaces))
+    (swap! fn-graph merge (named-functions-map namespaces))
     (count-fns namespaces)
-    (report @fn-counter)
+    (report @fn-graph)
     (shutdown-agents)))

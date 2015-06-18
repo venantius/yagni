@@ -3,7 +3,7 @@
             [yagni.namespace :refer [qualified-interns
                                      var-name]]))
 
-(def fn-counter (atom {}))
+(def fn-graph (atom {}))
 
 (defn get-form
   "Retrieve the form for the underlying symbol"
@@ -24,12 +24,15 @@
 
 (defn maybe-inc
   "Take a look at the form. If it's a symbol that can be resolved to a var,
-   and is already within our function counter, then increment the counter."
-  [form]
-  (if (symbol? form)
-    (if-let [form-var (try-to-resolve form)]
-      (when (get @fn-counter (var-name form-var))
-        (swap! fn-counter update-in [(var-name form-var)] conj)))))
+   and is already within our function counter, then add it to the counter."
+  [sym form]
+  (when (symbol? form)
+    (when-let [form-var (try-to-resolve form)]
+      (let [v (var-name form-var)]
+        (when (and
+                (get @fn-graph v)
+                (not= v sym))
+          (swap! fn-graph update-in [v] conj sym))))))
 
 (defn walk-form-body
   "Walk the form."
@@ -40,7 +43,7 @@
                        :sym sym})
       (walk-form-body {:form (rest form)
                        :sym sym}))
-    (maybe-inc form)))
+    (maybe-inc sym form)))
 
 (defn macroexpand-source
   "While keeping track of the symbol whose form we're exploring, macroexpand

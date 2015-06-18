@@ -18,15 +18,15 @@
          nil)))
 
 (deftest maybe-inc-works
-  (with-redefs [form/fn-counter (atom {'clojure.core/conj 0
+  (with-redefs [form/fn-graph (atom {'clojure.core/conj 0
                                        'clojure.core/bananas 0})] 
     (form/maybe-inc 'conj)
     (form/maybe-inc 'clojure.core/bananas)
-    (is (= @form/fn-counter {'clojure.core/conj 1
+    (is (= @form/fn-graph {'clojure.core/conj 1
                              'clojure.core/bananas 0}))))
 
 (deftest count-fns-works
-  (with-redefs [form/fn-counter (atom {'yagni.sample-ns/y 0})] 
+  (with-redefs [form/fn-graph (atom {'yagni.sample-ns/y 0})] 
     (form/count-fns ['yagni.sample-ns])
-    (is (= @form/fn-counter
+    (is (= @form/fn-graph
            {'yagni.sample-ns/y 1}))))

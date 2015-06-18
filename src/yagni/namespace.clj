@@ -32,4 +32,4 @@
   [namespaces]
   (into {} (map vector
                 (flatten (map named-functions namespaces))
-                (repeatedly (constantly 0)))))
+                (repeatedly (constantly [])))))

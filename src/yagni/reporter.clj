@@ -1,13 +1,14 @@
-(ns yagni.reporter)
+(ns yagni.reporter
+  (:require [clojure.tools.logging :as log]))
 
 (defn report-item
-  "Should I report on this item?"
-  [[fn-name counter]]
-  (when (= counter 1)
+  "If this function isn't called anywhere, emit a warning."
+  [[fn-name edges]]
+  (when (= (count edges) 0)
     (println "WARNING:" fn-name "doesn't seem to be called anywhere.")))
 
 (defn report
   "Report on the output"
-  [counter]
-  (println counter)
-  (doall (map report-item counter)))
+  [graph]
+  (println graph)
+  (doall (map report-item graph)))
