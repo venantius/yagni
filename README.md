@@ -35,7 +35,7 @@ To have Yagni search for dead code, just run:
 Running `lein yagni` on the sample project located [here](https://github.com/venantius/yagni-test) will emit the following output:
 
 ```
-[venantius@leviathan:yagni-test] 15:17:24 $ lein yagni
+$ lein yagni
 =================== WARNING: Parents ======================
 == Could not find any references to the following vars. ===
 ===========================================================
