@@ -1,6 +1,6 @@
 # Yagni
 [![Build Status](https://travis-ci.org/venantius/yagni.svg?branch=master)](https://travis-ci.org/venantius/yagni)
-[![Dependency Status](https://www.versioneye.com/user/projects/5585e7f0363861001b000215/badge.svg?style=flat)](https://www.versioneye.com/user/projects/5585e7f0363861001b000215/badge.svg?style=flat)
+[![Dependency Status](https://www.versioneye.com/user/projects/5585e7f0363861001b000215/badge.svg?style=flat)](https://www.versioneye.com/user/projects/5585e7f0363861001b000215)
 
 [Yagni](http://martinfowler.com/bliki/Yagni.html) - You Aren't Gonna Need It.
 
