@@ -5,8 +5,7 @@
 [Yagni](http://martinfowler.com/bliki/Yagni.html) - You Aren't Gonna Need It.
 
 No matter how it happens, sooner or later an application is going to end up
-with dead code. It's time to call Yagni, the exterminator. Begone,
-uncertainty about the usefulness of things!
+with dead code. It's time to call Yagni, the exterminator. 
 
 This plugin is a static code analyzer. It works by identifying all of the 
 interned vars in the namespaces findable within your `:source-paths`, and
@@ -31,6 +30,18 @@ To have Yagni search for dead code, just run:
 
     $ lein yagni
 
+## Configuration
+
+By default, Yagni assumes that the only entrypoint for your project is the one
+listed in your project.clj's `:main` key. Obviously, this is only useful for
+applications and tools with CLI invocations.
+
+As libraries, multi-main programs, and certain other types of projects either
+tend to have no `:main` or many entrypoint methods, you can instead enumerate
+a list of entrypoints for your project in a `.lein-yagni` file in the root 
+directory of your project. Feel free to take a look at the one in this project
+as an example.
+
 ## Examples
 
 Running `lein yagni` on the sample project located [here](https://github.com/venantius/yagni-test) will emit the following output:
@@ -50,18 +61,6 @@ secondns/func-the-second
 
 secondns/notafunc
 ```
-
-## Configuration
-
-By default, Yagni assumes that the only entrypoint for your project is the one
-listed in your project.clj's `:main` key. Obviously, this is only useful for
-applications and tools with CLI invocations.
-
-As libraries, multi-main programs, and certain other types of projects either
-tend to have no `:main` or many entrypoint methods, you can instead enumerate
-a list of entrypoints for your project in a `.lein-yagni` file in the root 
-directory of your project. Feel free to take a look at the one in this project
-as an example.
 
 ## Contributing
 
