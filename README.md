@@ -6,10 +6,12 @@ No matter how it happens, sooner or later an application is going to end up
 with dead code. It's time to call Yagni, the exterminator.
 
 Yagni works by identifying all of the interned vars in the namespaces
-findable within your `:source-paths`, and then walking all of the interned
-forms within those namespaces to count references to those vars.
+findable within your `:source-paths`, and then walking the forms of those vars.
 
-It emits warnings for any vars for which it hasn't found any outside references.
+As it walks the forms, it builds a graph of references to other vars. It then
+searches the graph from a set of entrypoints (by default just your project's
+`:main` method), and emits warnings for any vars that it couldn't find in the
+graph's search.
 
 ## Installation
 
@@ -21,13 +23,25 @@ Merge the following into your `~/.lein/profiles.clj`:
 
 ## Usage
 
-To have Yagni search for unused code, just run:
+To have Yagni search for dead code, just run:
 
     $ lein yagni
 
+## Configuration
+
+By default, Yagni assumes that the only entrypoint for your project is the one
+listed in your project.clj's `:main` key. Obviously, this is only useful for
+applications and tools with CLI invocations.
+
+As libraries and certain other types of projects tend not to have `:main`
+methods, you can instead define the public API / entrypoints for those
+projects by enumerating them in a `.lein-yagni` file in the root directory
+of your project.
+
 ## Contributing
 
-In general, bug reports, fixes, and code cleanup are always appreciated. Feature requests are liable to be subject to a bit more discussion. 
+In general, bug reports, fixes, and code cleanup are always appreciated. 
+Feature requests are liable to be subject to a bit more discussion. 
 
 When filing issues, please include the following:
 

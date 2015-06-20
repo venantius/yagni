@@ -14,10 +14,7 @@
          '(yagni.sample-ns/y
             yagni.sample-ns/x))))
 
-(deftest named-functions-works
-  (is (= (namesp/named-functions 'yagni.sample-ns)
-         '(yagni.sample-ns/y))))
-
-(deftest named-functions-map-works
-  (is (= (namesp/named-functions-map ['yagni.sample-ns]) 
-         {'yagni.sample-ns/y 0})))
+(deftest named-vars-map-works
+  (is (= (namesp/named-vars-map ['yagni.sample-ns]) 
+         {'yagni.sample-ns/y #{}
+          'yagni.sample-ns/x #{}})))

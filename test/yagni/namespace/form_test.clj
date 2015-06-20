@@ -1,15 +1,15 @@
 (ns yagni.namespace.form-test
   (:require [clojure.test :refer :all]
             [yagni.namespace.form :as form]
-            [yagni.sample-ns]
-            ))
+            [yagni.sample-ns]))
 
 (deftest get-form-works
   (is (= (form/get-form 'clojure.core/conj)
-         '(def conj
+         '{:source (def conj
             (fn conj ([coll x] (. clojure.lang.RT (conj coll x)))
               ([coll x & xs]
-               (if xs (recur (conj coll x) (first xs) (next xs)) (conj coll x))))))))
+               (if xs (recur (conj coll x) (first xs) (next xs)) (conj coll x)))))
+           :sym clojure.core/conj})))
 
 (deftest try-to-resolve-works
   (is (= (form/try-to-resolve 'conj)
@@ -18,15 +18,16 @@
          nil)))
 
 (deftest maybe-inc-works
-  (with-redefs [form/fn-counter (atom {'clojure.core/conj 0
-                                       'clojure.core/bananas 0})] 
-    (form/maybe-inc 'conj)
-    (form/maybe-inc 'clojure.core/bananas)
-    (is (= @form/fn-counter {'clojure.core/conj 1
-                             'clojure.core/bananas 0}))))
+  (with-redefs [form/graph (atom {'clojure.core/conj #{}
+                                  'clojure.core/bananas #{}})] 
+    (form/maybe-inc 'clojure.core/bananas 'conj)
+    (is (= @form/graph {'clojure.core/conj #{}
+                        'clojure.core/bananas #{'clojure.core/conj}}))))
 
-(deftest count-fns-works
-  (with-redefs [form/fn-counter (atom {'yagni.sample-ns/y 0})] 
-    (form/count-fns ['yagni.sample-ns])
-    (is (= @form/fn-counter
-           {'yagni.sample-ns/y 1}))))
+(deftest count-vars-works
+  (with-redefs [form/graph (atom {'yagni.sample-ns/y #{}
+                                  'yagni.sample-ns/x #{}})] 
+    (form/count-vars ['yagni.sample-ns])
+    (is (= @form/graph
+           {'yagni.sample-ns/y #{'yagni.sample-ns/x}
+            'yagni.sample-ns/x #{}}))))

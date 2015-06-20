@@ -3,4 +3,4 @@
 
 (def x "not a function")
 
-(defn y [] "A function")
+(defn y [] x)

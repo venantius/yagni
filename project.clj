@@ -4,5 +4,8 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.6.0"]
-                 [org.clojure/tools.analyzer.jvm "0.6.6"]]
+                 [org.clojure/tools.analyzer.jvm "0.6.6"]
+                 [org.clojure/tools.logging "0.3.0"]
+                 [org.clojure/tools.namespace "0.2.10"]
+                 [org.slf4j/slf4j-log4j12 "1.7.1"]]
   :eval-in-leiningen true)

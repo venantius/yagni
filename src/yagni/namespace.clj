@@ -1,6 +1,5 @@
 (ns yagni.namespace
-  "Functions for working with namespaces"
-  (:require [clojure.test :refer [function?]]))
+  "Functions for working with namespaces")
 
 (defn prepare-namespaces
   "First, create all of our namespaces so that we dont' have to worry about
@@ -20,16 +19,11 @@
 (defn qualified-interns
   "Return a seq of fully qualified namespace symbols"
   [n]
-  (map #(var-name (second %)) (ns-interns n)))
+  (map var-name (map second (ns-interns n))))
 
-(defn named-functions
-  "Return the named functions in this namespace"
-  [n]
-  (filter function? (qualified-interns n)))
-
-(defn named-functions-map
-  "Build a map of all named functions, with the values set to 0."
+(defn named-vars-map
+  "Build a map of all named vars, with the values set to an empty set."
   [namespaces]
   (into {} (map vector
-                (flatten (map named-functions namespaces))
-                (repeatedly (constantly 0)))))
+                (flatten (map qualified-interns namespaces))
+                (repeatedly (constantly #{})))))
