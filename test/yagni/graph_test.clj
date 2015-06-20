@@ -1,4 +1,4 @@
-(ns test.yagni.graph-test
+(ns yagni.graph-test
   (:require [clojure.test :refer :all]
             [yagni.graph :refer [prune-findable-nodes!]]))
 
