@@ -8,8 +8,9 @@ No matter how it happens, sooner or later an application is going to end up
 with dead code. It's time to call Yagni, the exterminator. Begone,
 uncertainty about the usefulness of things!
 
-Yagni works by identifying all of the interned vars in the namespaces
-findable within your `:source-paths`, and then walking the forms of those vars.
+This plugin is a static code analyzer. It works by identifying all of the 
+interned vars in the namespaces findable within your `:source-paths`, and
+then walking the forms of those vars.
 
 As it walks the forms, it builds a graph of references to other vars. It then
 searches the graph from a set of entrypoints (by default your project's
