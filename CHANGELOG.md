@@ -1,2 +1,2 @@
 ## 0.1.0
- * Initial release with form-walking
+ * Initial release with form-walking, graph search.

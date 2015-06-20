@@ -5,13 +5,14 @@
 [Yagni](http://martinfowler.com/bliki/Yagni.html) - You Aren't Gonna Need It.
 
 No matter how it happens, sooner or later an application is going to end up
-with dead code. It's time to call Yagni, the exterminator.
+with dead code. It's time to call Yagni, the exterminator. Begone,
+uncertainty about the usefulness of things!
 
 Yagni works by identifying all of the interned vars in the namespaces
 findable within your `:source-paths`, and then walking the forms of those vars.
 
 As it walks the forms, it builds a graph of references to other vars. It then
-searches the graph from a set of entrypoints (by default just your project's
+searches the graph from a set of entrypoints (by default your project's
 `:main` method), and emits warnings for any vars that it couldn't find in the
 graph's search.
 
@@ -29,16 +30,37 @@ To have Yagni search for dead code, just run:
 
     $ lein yagni
 
+## Examples
+
+Running `lein yagni` on the sample project located [here](https://github.com/venantius/yagni-test) will emit the following output:
+
+```
+[venantius@leviathan:yagni-test] 15:17:24 $ lein yagni
+=================== WARNING: Parents ======================
+== Could not find any references to the following vars. ===
+===========================================================
+
+secondns/func-the-second
+
+================== WARNING: Children ======================
+== The following vars have references to them, but their ==
+== parents do not.                                       ==
+===========================================================
+
+secondns/notafunc
+```
+
 ## Configuration
 
 By default, Yagni assumes that the only entrypoint for your project is the one
 listed in your project.clj's `:main` key. Obviously, this is only useful for
 applications and tools with CLI invocations.
 
-As libraries and certain other types of projects tend not to have `:main`
-methods, you can instead define the public API / entrypoints for those
-projects by enumerating them in a `.lein-yagni` file in the root directory
-of your project.
+As libraries, multi-main programs, and certain other types of projects either
+tend to have no `:main` or many entrypoint methods, you can instead enumerate
+a list of entrypoints for your project in a `.lein-yagni` file in the root 
+directory of your project. Feel free to take a look at the one in this project
+as an example.
 
 ## Contributing
 
