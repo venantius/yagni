@@ -36,6 +36,7 @@ To have Yagni search for dead code, just run:
 
 ## Configuration
 
+Yagni works by searching your codebase from an initial set of entrypoints.
 By default, Yagni assumes that the only entrypoint for your project is the one
 listed in your project.clj's `:main` key. Obviously, this is only useful for
 applications and tools with CLI invocations.
