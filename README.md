@@ -4,13 +4,15 @@
 
 [Yagni](http://martinfowler.com/bliki/Yagni.html) - You Aren't Gonna Need It.
 
+Yagni is a static code analyzer that helps you find unused code in your 
+applications and libraries.
+
+## Background
+
 No matter how it happens, sooner or later an application is going to end up
 with unused code. It's time to call Yagni, the exterminator. 
 
-This plugin is a static code analyzer that helps you find unused code in
-your applications and libraries.
-
-It works by identifying all of the interned vars in the namespaces findable 
+Yagni works by identifying all of the interned vars in the namespaces findable 
 within your `:source-paths`, and then walking the forms of those vars.
 
 As it walks the forms, it builds a graph of references to other vars. It then
