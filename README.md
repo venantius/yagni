@@ -7,7 +7,7 @@
 Yagni is a static code analyzer that helps you find unused code in your 
 applications and libraries.
 
-I've written a blog post describing Yagni in greater depth [here](http://blog.venanti.us/yagni/)
+I've written a blog post describing Yagni in greater depth [here](http://blog.venanti.us/yagni/).
 
 ## Background
 
