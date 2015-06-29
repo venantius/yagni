@@ -5,6 +5,13 @@
 
 (def x "sample var")
 
+(defprotocol SampleInterface
+  (foo [this]))
+
+(deftest interface->var-name-works
+  (is (= (namesp/interface->var-name yagni.namespace_test.SampleInterface)
+         'yagni.namespace-test/SampleInterface)))
+
 (deftest var-name-works
   (is (= (namesp/var-name (var x))
          'yagni.namespace-test/x)))
