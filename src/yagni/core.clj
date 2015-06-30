@@ -43,5 +43,7 @@
     (swap! graph merge (named-vars-map namespaces))
     (count-vars namespaces)
     (prune-findable-nodes! graph entrypoints found-nodes)
-    (report graph)
-    (shutdown-agents)))
+    (let [has-unused-vars? (report graph)]
+      (shutdown-agents)
+      (when has-unused-vars?
+        (System/exit 1)))))

@@ -21,4 +21,5 @@
         "== The following vars have references to them, but their ==\n"
         "== parents do not.                                       ==\n"
         "===========================================================\n"))
-      (doall (map println children)))))
+      (doall (map println children)))
+    (or (not-empty parents) (not-empty children))))
