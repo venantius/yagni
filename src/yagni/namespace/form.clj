@@ -1,5 +1,6 @@
 (ns yagni.namespace.form
   (:require [clojure.repl :refer [source-fn]]
+            [yagni.jvm :as jvm]
             [yagni.namespace :refer [qualified-interns
                                      var-name]]))
 
@@ -16,12 +17,14 @@
    return nil in that case."
   [x]
   (try
-    (resolve x)
+    (if-let [c (jvm/is-class-constructor? x)]
+      c
+      (resolve x))
     (catch java.lang.ClassNotFoundException e
       nil)))
 
 (defn maybe-inc
-  "Take a look at the form. If it's a symbol that can be resolved to a var 
+  "Take a look at the form. If it's a symbol that can be resolved to a var
    and exists as a node in our graph, then add an outgoing edge from the
    sym to this var."
   [graph sym form]
@@ -38,7 +41,7 @@
   [graph {:keys [form sym]}]
   (if (or (seq? form) (coll? form))
     (when (seq form)
-      (walk-form-body graph {:form (macroexpand-1 (first form))
+      (walk-form-body graph {:form (first form)
                              :sym sym})
       (walk-form-body graph {:form (rest form)
                              :sym sym}))
@@ -57,8 +60,10 @@
   (let [interns (qualified-interns n)
         forms (map get-form interns)]
     (in-ns n)
-    (doall (map println (map macroexpand forms)))
-    (doall (map (partial walk-form-body g) (map macroexpand-source forms)))))
+    (doall
+     (map
+      (partial walk-form-body g)
+      (map macroexpand-source forms)))))
 
 (defn count-vars
   "Count the functions in all namespaces."

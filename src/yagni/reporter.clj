@@ -12,10 +12,10 @@
        (str
         "=================== WARNING: Parents ======================\n"
         "==    Could not find any references to the following     ==\n"
-        "===========================================================\n"))  
+        "===========================================================\n"))
       (doall (map println parents)))
     (when (not-empty children)
-      (println 
+      (println
        (str
         "\n"
         "================== WARNING: Children ======================\n"

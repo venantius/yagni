@@ -19,7 +19,7 @@
   "Merge the main method (if it exists) with any entrypoints from the
    `.lein-yagni` file (if it exists)."
   [main]
-  (into [] (concat 
+  (into [] (concat
             (load-entrypoints)
             (when main [(symbol (str main) "-main")]))))
 
@@ -27,12 +27,12 @@
   "Main Yagni function.
 
    Yagni works by keeping track of all interned vars defined in a project's
-   :source-paths directories' namespaces, and then macroexpanding all the 
+   :source-paths directories' namespaces, and then macroexpanding all the
    forms in those namespaces to see where those are actually used.
 
    As it walks the forms, it builds a graph of var references. Once it's done
-   building the graph, it searches the graph and emits warnings for nodes 
-   (vars) that weren't reachable from a search of entry points. By default, 
+   building the graph, it searches the graph and emits warnings for nodes
+   (vars) that weren't reachable from a search of entry points. By default,
    the only entry point is the project's `:main` method, but additional entry
    points can be specified in a `.lein-yagni` file at the root directory of
    the project."
@@ -42,9 +42,10 @@
     (namesp/prepare-namespaces namespaces)
     (let [graph (atom (namesp/named-vars-map namespaces))
           generator-fns (jvm/find-generator-fns graph)]
-      (jvm/extend-graph-for-java! graph generator-fns)
+      (jvm/extend-generators! graph generator-fns)
       (form/count-vars graph namespaces)
       (graph/prune-findable-nodes! graph entrypoints (atom #{}))
+      (jvm/compress-generators! graph generator-fns)
       (let [has-unused-vars? (report graph)]
         (shutdown-agents)
         (when has-unused-vars?

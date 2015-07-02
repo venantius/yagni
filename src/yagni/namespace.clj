@@ -15,12 +15,12 @@
 
 (defn var-name
   "Return the fully qualified name of the corresponding var.
-   
+
    Includes checks for things like interfaces, which may exist as Clojure vars
    but must be checked "
   [v]
   (cond
-    (and (class? v) (interface? v))
+    (class? v)
     (jvm/class-name->var-name v)
     :else
     (symbol (str (:ns (meta v)))

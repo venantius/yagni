@@ -32,36 +32,63 @@
 (defn is-class-generator?
   "Check to see if a given var is a class generator. If it is, returns the
    Java class for the generator in question.
-   
-   This function is intended for dealing with the class generator functions 
+
+   This function is intended for dealing with the class generator functions
    that are interned by `deftype` and `defrecord` declarations."
   [v]
   (let [v (resolve v)
         n (str (:ns (meta v)))
         name (str (:name (meta v)))]
     (or
-      (and 
-        (.startsWith name "->")
-        (resolve (var-name->class-name (symbol n (subs name 2)))))
-      (and 
-        (.startsWith name "map->")
-        (resolve (var-name->class-name (symbol n (subs name 5))))))))
+     (and
+      (.startsWith name "->")
+      (resolve (var-name->class-name (symbol n (subs name 2)))))
+     (and
+      (.startsWith name "map->")
+      (resolve (var-name->class-name (symbol n (subs name 5))))))))
+
+(defn is-class-constructor?
+  "Check to see if a given symbol is a class constructor (e.g. `(String.)`)"
+  [s]
+  (let [s (str s)]
+    (when (> (count s) 1)
+      (and (.endsWith s ".")
+           (resolve (symbol (subs s 0 (- (count s) 1))))))))
 
 (defn find-generator-fns
   [g]
   (into #{} (filter is-class-generator? (keys @g))))
 
-(defn extend-graph-for-java!
+(defn extend-generators!
   "Given generator functions, add nodes for the corresponding `deftype` or
    `defrecord` and add edges from the generator functions to those
    nodes.
-   
+
    It's worth noting that `deftype` and `defrecord` forms don't intern
    vars for themselves (just their generators). The fact that we add nodes
    for them is an exception to the normal mode of operation here."
   [g fns]
   (doseq [f fns]
     (when-let [v (class-name->var-name
-                   (is-class-generator? f))]
+                  (is-class-generator? f))]
       (swap! g assoc v #{})
       (swap! g update-in [f] conj v))))
+
+(defn compress-generators!
+  "Given a set of generator functions, compress the graph so that any
+   edges to generator functions point instead to the 'vars' for the
+   corresponding class objects, and any nodes for generator functions
+   are removed."
+  [g fns]
+  (doseq [[k v] @g]
+    (doseq [f v]
+      (when-let [c (is-class-generator? f)]
+        (swap! g update-in [k] conj (class-name->var-name c))
+        (swap! g update-in [k] disj f))))
+  (doseq [[k v] @g]
+    (when-let [c (is-class-generator? k)]
+      (swap! g dissoc k)
+      (let [var-name (class-name->var-name c)]
+        (swap! g update-in [var-name] clojure.set/union v)
+        (swap! g update-in [var-name]
+               disj var-name)))))
