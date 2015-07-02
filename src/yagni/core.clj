@@ -42,7 +42,7 @@
     (namesp/prepare-namespaces namespaces)
     (let [graph (atom (namesp/named-vars-map namespaces))
           generator-fns (jvm/find-generator-fns graph)]
-      (jvm/extend-graph-for-java! graph generator-fns)
+      (jvm/extend-generators! graph generator-fns)
       (form/count-vars graph namespaces)
       (graph/prune-findable-nodes! graph entrypoints (atom #{}))
       (let [has-unused-vars? (report graph)]

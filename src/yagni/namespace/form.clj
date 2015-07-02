@@ -1,5 +1,6 @@
 (ns yagni.namespace.form
   (:require [clojure.repl :refer [source-fn]]
+            [yagni.jvm :as jvm]
             [yagni.namespace :refer [qualified-interns
                                      var-name]]))
 
@@ -16,7 +17,10 @@
    return nil in that case."
   [x]
   (try
-    (resolve x)
+    (let [c (jvm/is-class-constructor? x)]
+      (if c
+        c
+        (resolve x)))
     (catch java.lang.ClassNotFoundException e
       nil)))
 
@@ -27,6 +31,7 @@
   [graph sym form]
   (when (symbol? form)
     (when-let [form-var (try-to-resolve form)]
+      (println (var-name form-var))
       (let [v (var-name form-var)]
         (when (and
                (get @graph v)
@@ -38,7 +43,7 @@
   [graph {:keys [form sym]}]
   (if (or (seq? form) (coll? form))
     (when (seq form)
-      (walk-form-body graph {:form (macroexpand-1 (first form))
+      (walk-form-body graph {:form (first form)
                              :sym sym})
       (walk-form-body graph {:form (rest form)
                              :sym sym}))

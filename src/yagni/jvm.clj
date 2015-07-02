@@ -47,11 +47,19 @@
         (.startsWith name "map->")
         (resolve (var-name->class-name (symbol n (subs name 5))))))))
 
+(defn is-class-constructor?
+  "Check to see if a given symbol is a class constructor (e.g. `(String.)`)"
+  [s]
+  (let [s (str s)]
+    (when (> (count s) 1)
+      (and (.endsWith s ".")
+           (resolve (symbol (subs s 0 (- (count s) 1))))))))
+
 (defn find-generator-fns
   [g]
   (into #{} (filter is-class-generator? (keys @g))))
 
-(defn extend-graph-for-java!
+(defn extend-generators!
   "Given generator functions, add nodes for the corresponding `deftype` or
    `defrecord` and add edges from the generator functions to those
    nodes.
@@ -65,3 +73,13 @@
                    (is-class-generator? f))]
       (swap! g assoc v #{})
       (swap! g update-in [f] conj v))))
+
+(defn compress-generators!
+  "Given a set of generator functions, compress the graph so that any
+   edges to generator functions point instead to the 'vars' for the
+   corresponding class objects."
+  [g fns]
+  (doseq [[k v] @g]
+    (doseq [f v])
+    )
+  )
