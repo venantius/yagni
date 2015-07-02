@@ -3,8 +3,6 @@
             [yagni.namespace :refer [qualified-interns
                                      var-name]]))
 
-(def graph (atom {}))
-
 (defn get-form
   "Retrieve the form for the underlying symbol"
   [s]
@@ -26,25 +24,25 @@
   "Take a look at the form. If it's a symbol that can be resolved to a var 
    and exists as a node in our graph, then add an outgoing edge from the
    sym to this var."
-  [sym form]
+  [graph sym form]
   (when (symbol? form)
     (when-let [form-var (try-to-resolve form)]
       (let [v (var-name form-var)]
         (when (and
-                (get @graph v)
-                (not= v sym))
+               (get @graph v)
+               (not= v sym))
           (swap! graph update-in [sym] conj v))))))
 
 (defn walk-form-body
   "Walk the form."
-  [{:keys [form sym]}]
+  [graph {:keys [form sym]}]
   (if (or (seq? form) (coll? form))
     (when (seq form)
-      (walk-form-body {:form (first form)
-                       :sym sym})
-      (walk-form-body {:form (rest form)
-                       :sym sym}))
-    (maybe-inc sym form)))
+      (walk-form-body graph {:form (macroexpand-1 (first form))
+                             :sym sym})
+      (walk-form-body graph {:form (rest form)
+                             :sym sym}))
+    (maybe-inc graph sym form)))
 
 (defn macroexpand-source
   "While keeping track of the symbol whose form we're exploring, macroexpand
@@ -55,13 +53,14 @@
 
 (defn count-vars-in-ns
   "Count the functions in a single ns."
-  [n]
+  [g n]
   (let [interns (qualified-interns n)
         forms (map get-form interns)]
     (in-ns n)
-    (doall (map walk-form-body (map macroexpand-source forms)))))
+    (doall (map println (map macroexpand forms)))
+    (doall (map (partial walk-form-body g) (map macroexpand-source forms)))))
 
 (defn count-vars
   "Count the functions in all namespaces."
-  [namespaces]
-  (doall (map count-vars-in-ns namespaces)))
+  [graph namespaces]
+  (doall (map (partial count-vars-in-ns graph) namespaces)))

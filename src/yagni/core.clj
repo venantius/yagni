@@ -1,10 +1,11 @@
 (ns yagni.core
   (:require [clojure.java.io :as io]
             [clojure.string :as string]
-            [yagni.graph :refer [prune-findable-nodes!]]
+            [yagni.graph :as graph]
+            [yagni.jvm :as jvm]
             [yagni.namespace.dir :refer [nss-in-dirs]]
-            [yagni.namespace.form :refer [graph count-vars]]
-            [yagni.namespace :refer [named-vars-map prepare-namespaces]]
+            [yagni.namespace.form :as form]
+            [yagni.namespace :as namesp]
             [yagni.reporter :refer [report]]))
 
 (defn load-entrypoints
@@ -37,13 +38,14 @@
    the project."
   [{:keys [source-paths main] :as opts}]
   (let [namespaces (nss-in-dirs source-paths)
-        entrypoints (merge-entrypoints main)
-        found-nodes (atom #{})]
-    (prepare-namespaces namespaces)
-    (swap! graph merge (named-vars-map namespaces))
-    (count-vars namespaces)
-    (prune-findable-nodes! graph entrypoints found-nodes)
-    (let [has-unused-vars? (report graph)]
-      (shutdown-agents)
-      (when has-unused-vars?
-        (System/exit 1)))))
+        entrypoints (merge-entrypoints main)]
+    (namesp/prepare-namespaces namespaces)
+    (let [graph (atom (namesp/named-vars-map namespaces))
+          generator-fns (jvm/find-generator-fns graph)]
+      (jvm/extend-graph-for-java! graph generator-fns)
+      (form/count-vars graph namespaces)
+      (graph/prune-findable-nodes! graph entrypoints (atom #{}))
+      (let [has-unused-vars? (report graph)]
+        (shutdown-agents)
+        (when has-unused-vars?
+          (System/exit 1))))))
