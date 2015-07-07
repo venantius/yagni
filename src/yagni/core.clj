@@ -1,10 +1,11 @@
 (ns yagni.core
   (:require [clojure.java.io :as io]
             [clojure.string :as string]
-            [yagni.graph :refer [prune-findable-nodes!]]
+            [yagni.graph :as graph]
+            [yagni.jvm :as jvm]
             [yagni.namespace.dir :refer [nss-in-dirs]]
-            [yagni.namespace.form :refer [graph count-vars]]
-            [yagni.namespace :refer [named-vars-map prepare-namespaces]]
+            [yagni.namespace.form :as form]
+            [yagni.namespace :as namesp]
             [yagni.reporter :refer [report]]))
 
 (defn load-entrypoints
@@ -18,7 +19,7 @@
   "Merge the main method (if it exists) with any entrypoints from the
    `.lein-yagni` file (if it exists)."
   [main]
-  (into [] (concat 
+  (into [] (concat
             (load-entrypoints)
             (when main [(symbol (str main) "-main")]))))
 
@@ -26,22 +27,26 @@
   "Main Yagni function.
 
    Yagni works by keeping track of all interned vars defined in a project's
-   :source-paths directories' namespaces, and then macroexpanding all the 
+   :source-paths directories' namespaces, and then macroexpanding all the
    forms in those namespaces to see where those are actually used.
 
    As it walks the forms, it builds a graph of var references. Once it's done
-   building the graph, it searches the graph and emits warnings for nodes 
-   (vars) that weren't reachable from a search of entry points. By default, 
+   building the graph, it searches the graph and emits warnings for nodes
+   (vars) that weren't reachable from a search of entry points. By default,
    the only entry point is the project's `:main` method, but additional entry
    points can be specified in a `.lein-yagni` file at the root directory of
    the project."
   [{:keys [source-paths main] :as opts}]
   (let [namespaces (nss-in-dirs source-paths)
-        entrypoints (merge-entrypoints main)
-        found-nodes (atom #{})]
-    (prepare-namespaces namespaces)
-    (swap! graph merge (named-vars-map namespaces))
-    (count-vars namespaces)
-    (prune-findable-nodes! graph entrypoints found-nodes)
-    (report graph)
-    (shutdown-agents)))
+        entrypoints (merge-entrypoints main)]
+    (namesp/prepare-namespaces namespaces)
+    (let [graph (atom (namesp/named-vars-map namespaces))
+          generator-fns (jvm/find-generator-fns graph)]
+      (jvm/extend-generators! graph generator-fns)
+      (form/count-vars graph namespaces)
+      (graph/prune-findable-nodes! graph entrypoints (atom #{}))
+      (jvm/compress-generators! graph generator-fns)
+      (let [has-unused-vars? (report graph)]
+        (shutdown-agents)
+        (when has-unused-vars?
+          (System/exit 1))))))

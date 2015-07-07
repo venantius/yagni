@@ -27,7 +27,7 @@ graph's search.
 Merge the following into your `~/.lein/profiles.clj`:
 
 ```clojure
-{:user {:plugins [[venantius/yagni "0.1.1"]]}}
+{:user {:plugins [[venantius/yagni "0.1.2"]]}}
 ```
 
 ## Usage
