@@ -14,13 +14,14 @@ I've written a blog post describing Yagni in greater depth [here](http://blog.ve
 No matter how it happens, sooner or later an application is going to end up
 with unused code. It's time to call Yagni, the exterminator. 
 
-Yagni works by identifying all of the interned vars in the namespaces findable 
-within your `:source-paths`, and then walking the forms of those vars.
+Yagni works by identifying all of the interned vars and declared Java classes
+in the namespaces findable within your `:source-paths`, and then walking the 
+forms of those vars and declarations.
 
-As it walks the forms, it builds a graph of references to other vars. It then
-searches the graph from a set of entrypoints (by default your project's
-`:main` method), and emits warnings for any vars that it couldn't find in the
-graph's search.
+As it walks the forms, it builds a graph of references to other vars and 
+declarations. It then searches the graph from a set of entrypoints (by default
+your project's `:main` method), and emits warnings for anything that it 
+couldn't find in the graph's search.
 
 ## Installation
 
