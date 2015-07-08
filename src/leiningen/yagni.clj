@@ -7,7 +7,7 @@
    walker."
   [project & args]
   (let [opts (select-keys project [:source-paths :yagni :main])
-        deps {:dependencies [['venantius/yagni "0.1.2-SNAPSHOT"]]}]
+        deps {:dependencies [['venantius/yagni "0.1.3-SNAPSHOT"]]}]
     (eval-in-project
       (merge-profiles project [deps])
       `(yagni.core/run-yagni '~opts)
