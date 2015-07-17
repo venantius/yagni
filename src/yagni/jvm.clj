@@ -1,6 +1,7 @@
 (ns yagni.jvm
   "Utility functions for working with the JVM."
-  (:require [clojure.string :as string]))
+  (:require [clojure.reflect :refer [resolve-class]]
+            [clojure.string :as string]))
 
 (defn class-name->var-name
   "Return the var name for the given class name.
@@ -29,6 +30,13 @@
         c (last v)]
     (symbol (string/join "." [n c]))))
 
+(defn can-resolve-class?
+  [c]
+  (try
+    (resolve c)
+    (catch ClassNotFoundException e
+      false)))
+
 (defn is-class-generator?
   "Check to see if a given var is a class generator. If it is, returns the
    Java class for the generator in question.
@@ -42,10 +50,10 @@
     (or
      (and
       (.startsWith name "->")
-      (resolve (var-name->class-name (symbol n (subs name 2)))))
+      (can-resolve-class? (var-name->class-name (symbol n (subs name 2)))))
      (and
       (.startsWith name "map->")
-      (resolve (var-name->class-name (symbol n (subs name 5))))))))
+      (can-resolve-class? (var-name->class-name (symbol n (subs name 5))))))))
 
 (defn is-class-constructor?
   "Check to see if a given symbol is a class constructor (e.g. `(String.)`)"
