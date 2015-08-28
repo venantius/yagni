@@ -23,6 +23,21 @@
             (load-entrypoints)
             (when main [(symbol (str main) "-main")]))))
 
+(defn construct-reference-graph
+  "Build a graph of variable references within the provided source-paths,
+  with escape hatches for the provided main method."
+  [source-paths & [main]]
+  (let [namespaces (nss-in-dirs source-paths)
+        entrypoints (merge-entrypoints main)]
+    (namesp/prepare-namespaces namespaces)
+    (let [graph (atom (namesp/named-vars-map namespaces))
+          generator-fns (jvm/find-generator-fns graph)]
+      (jvm/extend-generators! graph generator-fns)
+      (form/count-vars graph namespaces)
+      (graph/prune-findable-nodes! graph entrypoints (atom #{}))
+      (jvm/compress-generators! graph generator-fns)
+      graph)))
+
 (defn run-yagni
   "Main Yagni function.
 
@@ -37,16 +52,8 @@
    points can be specified in a `.lein-yagni` file at the root directory of
    the project."
   [{:keys [source-paths main] :as opts}]
-  (let [namespaces (nss-in-dirs source-paths)
-        entrypoints (merge-entrypoints main)]
-    (namesp/prepare-namespaces namespaces)
-    (let [graph (atom (namesp/named-vars-map namespaces))
-          generator-fns (jvm/find-generator-fns graph)]
-      (jvm/extend-generators! graph generator-fns)
-      (form/count-vars graph namespaces)
-      (graph/prune-findable-nodes! graph entrypoints (atom #{}))
-      (jvm/compress-generators! graph generator-fns)
-      (let [has-unused-vars? (report graph)]
-        (shutdown-agents)
-        (when has-unused-vars?
-          (System/exit 1))))))
+  (let [graph (construct-reference-graph source-paths main)
+        has-unused-vars? (report graph)]
+    (shutdown-agents)
+    (when has-unused-vars?
+      (System/exit 1))))
