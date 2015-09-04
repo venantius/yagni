@@ -1,15 +1,17 @@
 (ns yagni.namespace.form
   (:require [clojure.repl :refer [source-fn]]
+            [glow.parse :as parse]
             [yagni.jvm :as jvm]
             [yagni.namespace :refer [qualified-interns
-                                     var-name]]))
+                                     var-name]]
+            [yagni.namespace.form.tagged-literal :refer [find-literals]]))
 
 (defn get-form
   "Retrieve the form for the underlying symbol"
   [s]
-  (when (source-fn s)
-    {:source
-     (read-string (source-fn s))
+  (when-let [source (source-fn s)]
+    {:source source
+     :form (read-string source)
      :sym s}))
 
 (defn try-to-resolve
@@ -47,12 +49,22 @@
                              :sym sym}))
     (maybe-inc graph sym form)))
 
-(defn macroexpand-source
+(defn macroexpand-form
   "While keeping track of the symbol whose form we're exploring, macroexpand
-   the form's source."
-  [{:keys [source sym]}]
-  {:form (macroexpand source)
-   :sym sym})
+   the form."
+  [{:keys [form] :as f}]
+  (assoc f :form (macroexpand form)))
+
+(defn find-tagged-literals
+  "Search for tagged literals in the source string."
+  [{:keys [form source sym]}]
+  (when source
+    #_(println source)
+    #_(println (parse/parse source))
+    #_(println (count (parse/parse source)))
+    (println "IN BETWEEN")
+    (println (find-literals (parse/parse source))
+           )))
 
 (defn count-vars-in-ns
   "Count the functions in a single ns."
@@ -60,10 +72,10 @@
   (let [interns (qualified-interns n)
         forms (map get-form interns)]
     (in-ns n)
-    (doall
-     (map
-      (partial walk-form-body g)
-      (map macroexpand-source forms)))))
+    (doall (map
+            (partial walk-form-body g)
+            (map macroexpand-form forms)))
+    (doall (map find-tagged-literals forms))))
 
 (defn count-vars
   "Count the functions in all namespaces."
