@@ -7,9 +7,8 @@
 (defn get-form
   "Retrieve the form for the underlying symbol"
   [s]
-  (when (source-fn s)
-    {:source
-     (read-string (source-fn s))
+  (when-let [source (source-fn s)]
+    {:source (read-string {:read-cond :allow} source)
      :sym s}))
 
 (defn try-to-resolve

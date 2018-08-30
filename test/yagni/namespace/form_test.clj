@@ -4,12 +4,11 @@
             [yagni.sample-ns]))
 
 (deftest get-form-works
-  (is (= (form/get-form 'clojure.core/conj)
-         '{:source (def conj
-                     (fn conj ([coll x] (. clojure.lang.RT (conj coll x)))
-                       ([coll x & xs]
-                        (if xs (recur (conj coll x) (first xs) (next xs)) (conj coll x)))))
-           :sym clojure.core/conj})))
+  (is (= (form/get-form 'yagni.sample-ns/form-for-testing-get)
+         '{:source (defn form-for-testing-get
+                     [& args]
+                     (+ 1 2 3 (first args)))
+           :sym yagni.sample-ns/form-for-testing-get})))
 
 (deftest try-to-resolve-works
   (is (= (form/try-to-resolve 'conj)
