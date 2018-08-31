@@ -1,3 +1,6 @@
+## 0.1.5
+ * Do not throw on Clojure projects containing files with reader conditionals (e.g. `.cljc`). This does *not* mean support for .cljs files
+
 ## 0.1.4
  * Failed to bump the version injection in 0.1.3, so this is actually what 0.1.3 should have been.
 
