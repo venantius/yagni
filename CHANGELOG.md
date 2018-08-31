@@ -1,3 +1,6 @@
+## 0.1.6
+ * Adds support to reader conditionals, thanks to [@nha](https://github.com/nha) and [@jcf](https://github.com/jcf).
+
 ## 0.1.5
  * Do not throw on Clojure projects containing files with reader conditionals (e.g. `.cljc`). This does *not* mean support for .cljs files
 
