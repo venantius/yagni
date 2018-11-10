@@ -1,6 +1,7 @@
 # Yagni
 [![Build Status](https://travis-ci.org/venantius/yagni.svg?branch=master)](https://travis-ci.org/venantius/yagni)
 [![Dependency Status](https://www.versioneye.com/user/projects/5585e7f0363861001b000215/badge.svg?style=flat)](https://www.versioneye.com/user/projects/5585e7f0363861001b000215)
+[![Clojars Project](https://img.shields.io/clojars/v/venantius/yagni.svg)](https://clojars.org/venantius/yagni)
 
 [Yagni](http://martinfowler.com/bliki/Yagni.html) - You Aren't Gonna Need It.
 
@@ -28,7 +29,7 @@ couldn't find in the graph's search.
 Merge the following into your `~/.lein/profiles.clj`:
 
 ```clojure
-{:user {:plugins [[venantius/yagni "0.1.4"]]}}
+{:user {:plugins [[venantius/yagni "0.1.6"]]}}
 ```
 
 ## Usage
