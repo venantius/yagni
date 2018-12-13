@@ -1,8 +1,6 @@
 (ns yagni.namespace
   "Functions for working with namespaces"
-  (:require [clojure.string :as string]
-            [hara.class :refer [interface?]]
-            [yagni.jvm :as jvm]))
+  (:require [yagni.jvm :as jvm]))
 
 (defn prepare-namespaces
   "First, create all of our namespaces so that we dont' have to worry about
