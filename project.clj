@@ -1,4 +1,4 @@
-(defproject venantius/yagni "0.1.6"
+(defproject venantius/yagni "0.1.7"
   :description "A Leiningen plugin for finding dead code."
   :url "https://github.com/venantius/yagni"
   :license {:name "Eclipse Public License"

@@ -1,3 +1,7 @@
+## 0.1.7
+
+ * Bumps plugin to correctly install Yagni dep at current level (0.1.7)
+
 ## 0.1.6
  * Adds support to reader conditionals, thanks to [@nha](https://github.com/nha) and [@jcf](https://github.com/jcf).
 
