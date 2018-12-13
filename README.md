@@ -84,13 +84,8 @@ When filing issues, please include the following:
  * The Clojure version
  * Any plugins and dependencies in your `project.clj` and your `~/.lein/profiles.clj`
 
-## Special Thanks
-
-The following have sponsored work on Yagni:  
-![](https://cloud.githubusercontent.com/assets/1824859/6809419/63b4a31a-d217-11e4-9427-11d910410b10.png)
-
 ## License
 
-Copyright © 2015 W. David Jarvis
+Copyright © 2018 W. David Jarvis
 
 Distributed under the Eclipse Public License, the same as Clojure.
