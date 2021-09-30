@@ -38,6 +38,22 @@ To have Yagni search for dead code, just run:
 
     $ lein yagni
 
+## Usage from `deps.edn`
+
+You can also use Yagni via a `deps.edn` alias. Merge this with your `deps.edn`:
+
+```clojure
+{:aliases {:yagni
+           {:extra-deps {venantius/yagni {:mvn/version "0.1.7"}}
+            :exec-fn yagni.core/run-yagni
+            :exec-args {:source-paths ["src/clj"]
+                        :main your.project}}}
+```
+
+And then run:
+
+    $ clj -X:yagni
+
 ## Configuration
 
 Yagni works by searching your codebase from an initial set of entrypoints.
